@@ -65,8 +65,6 @@ def main(argv):
                 valid_args = True
             if opt == "-v":
                 if arg == "b":
-                    # fetch blockchain from server
-                    # get blockchain info
                     _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
                     if blockchain:
                         b_chain = Blockchain.load_json(json.dumps(blockchain))
