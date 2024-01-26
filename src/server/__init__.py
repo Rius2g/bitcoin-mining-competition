@@ -11,7 +11,7 @@ PORT = '8080'
 ADDRESS = 'ete011@inf3203.cs.uit.no'
 URL = 'https://' + ADDRESS + ':' + PORT + '/'
 
-SELF = 'your_username'  # TODO: insert your username here
+SELF = 'hmm112'  # TODO: insert your username here
 
 # endpoints
 BLOCK_PROPOSAL = 'block_proposal'
