@@ -1,7 +1,4 @@
 from utils.cryptographic import hash_function
-
-# TODO: Make Merkle tree structure
-
 class MerkelNode:
     def __init__(self, left, right, hash):
         self.left: MerkelNode = left
