@@ -1,6 +1,9 @@
 # backbone/consensus.py
 
-# TODO: Implement Proof of Work
+def POW():
+    pass
 
-# TODO: Build a block
+def build_block():
+    pass
+
 

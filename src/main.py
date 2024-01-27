@@ -41,6 +41,7 @@ def main(argv):
                 valid_args = True
                 break
             if opt == "-m":  # mine block
+                #Get data about chain, send to POW Algo which returns a block=data
                 response, _, _ = flask_call('POST', BLOCK_PROPOSAL, data=None)
                 print(response)
                 valid_args = True
