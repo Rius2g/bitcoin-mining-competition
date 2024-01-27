@@ -50,19 +50,22 @@ def main(argv):
                     _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
                     if blockchain:
                         b_chain = Blockchain.load_json(json.dumps(blockchain))
-                        print(b_chain)
+                        # table = create_visualization_table(b_chain.block_list)
+                        print(b_chain) #might need to use some views stuff to visualize better
                     valid_args = True
                 elif arg == "u":
                     _, users, code = flask_call('GET', GET_USERS)
                     if users:
-                        print(users)
+                        # table = create_visualization_table(users)
+                        print(users) #might need to use some views stuff to visualize better
                     valid_args = True
                 else:
                     valid_args = False
             if opt == "-t":
                 _, txs, code = flask_call('GET', REQUEST_TXS)
                 if txs:
-                    print(txs)
+                    # table = create_visualization_table(txs)
+                    print(txs) #might need to use some views stuff to visualize better
                 valid_args = True
             if opt == "-v":
                 if arg == "b":
