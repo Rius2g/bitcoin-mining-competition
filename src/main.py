@@ -43,13 +43,13 @@ def main(argv):
                 break
             if opt == "-m":  # mine block
                 difficulty, table, code = flask_call('GET', REQUEST_DIFFICULTY)
-                _, txs, code = flask_call('GET', REQUEST_TXS)
                 _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
-                    prev_hash = b_chain.get_last_block().hash #???
-                    timestamp = b_chain.get_last_block().timestamp #???
-                proposed_block = POW(txs, prev_hash, timestamp, difficulty)
+                    prev_hash = b_chain.get_last_block().hash
+                    timestamp = b_chain.get_last_block().time 
+                    merkelRoot = b_chain.get_last_block().merkelRoot
+                proposed_block = POW(merkelRoot, prev_hash, timestamp, difficulty)
                 response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True

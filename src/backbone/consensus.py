@@ -4,10 +4,9 @@ from merkle import MerkleTree
 from block import Block
 
 
-def POW(txs, prev_hash, timestamp, DIFFICULTY):
+def POW(merkelRoot, prev_hash, timestamp, DIFFICULTY):
     Nonece = 0
-    Tree = MerkleTree(txs)
-    block_header = Tree.root.hash + prev_hash + timestamp
+    block_header = merkelRoot + prev_hash + timestamp
 
     while True:
         hash = hash_function(block_header + Nonece)
