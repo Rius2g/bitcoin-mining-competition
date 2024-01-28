@@ -24,11 +24,12 @@ import requests
 import json
 from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from consensus import POW
 
 from utils.flask_utils import flask_call
 from abstractions.block import Blockchain
 from server import BLOCK_PROPOSAL, REQUEST_DIFFICULTY, GET_BLOCKCHAIN, ADDRESS, PORT, GET_USERS, REQUEST_TXS
-from utils.view import visualize_blockchain, visualize_blockchain_terminal
+from utils.view import visualize_blockchain, visualize_blockchain_terminal, create_visualization_table
 
 def main(argv):
     try:
@@ -41,8 +42,15 @@ def main(argv):
                 valid_args = True
                 break
             if opt == "-m":  # mine block
-                #Get data about chain, send to POW Algo which returns a block=data
-                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, data=None)
+                difficulty, table, code = flask_call('GET', REQUEST_DIFFICULTY)
+                _, txs, code = flask_call('GET', REQUEST_TXS)
+                _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
+                if blockchain:
+                    b_chain = Blockchain.load_json(json.dumps(blockchain))
+                    prev_hash = b_chain.get_last_block().hash #???
+                    timestamp = b_chain.get_last_block().timestamp #???
+                proposed_block = POW(txs, prev_hash, timestamp, difficulty)
+                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
             if opt == "-i":
@@ -56,7 +64,8 @@ def main(argv):
                 elif arg == "u":
                     _, users, code = flask_call('GET', GET_USERS)
                     if users:
-                        # table = create_visualization_table(users)
+                        field_names = ["username", "address", "balance (BTC)", "mined blocks", "confirmed blocks", "reward (BTC)"]
+                        table = create_visualization_table(field_names, users, "Users INFO")
                         print(users) #might need to use some views stuff to visualize better
                     valid_args = True
                 else:
