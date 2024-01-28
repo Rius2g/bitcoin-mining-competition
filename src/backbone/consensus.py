@@ -17,6 +17,8 @@ def POW(txs, prev_hash, timestamp, DIFFICULTY):
         Nonece += 1
 
 def build_block():
+    return Block() #send in params
+    
     pass
 
 
