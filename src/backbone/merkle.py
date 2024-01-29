@@ -9,15 +9,15 @@ class MerkelNode:
 
 
 class MerkleTree:
-    def __init__(self, txs):
+    def __init__(self, txs): #list of transaction dicts
         self.data = None
         self.leaf_nodes = None
-        self.build_tree(txs)
         self.root = None
+        self.build_tree(txs)
 
     def build_tree(self, hashes):
-        # fill up the hashes list if < 4 hashes
-        leaves: [MerkelNode] = [MerkelNode(None, None, _) for _ in range(len(hashes))]
+
+        leaves: [MerkelNode] = [MerkelNode(None, None, hash) for hash in hashes]
         if len(hashes) % 2 == 1:
             hashes.append(hashes[-1])
         self.root = self.build_tree_helper(leaves)

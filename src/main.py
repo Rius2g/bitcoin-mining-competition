@@ -24,7 +24,6 @@ import getopt
 import random
 import requests
 import json
-from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from utils.flask_utils import flask_call
@@ -42,9 +41,9 @@ from server import (
 from utils.view import (
     visualize_blockchain,
     visualize_blockchain_terminal,
-    create_visualization_table,
 )
 from backbone.consensus import POW
+from abstractions.transaction import Transaction
 
 
 def main(argv):
@@ -60,11 +59,13 @@ def main(argv):
             if opt == "-m":  # mine block
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                 _, txs, code = flask_call("GET", REQUEST_TXS)
-                #need to get transactions from server
+                transactions = []
+                for tx in txs:
+                    transactions.append(Transaction.load_json(json.dumps(tx)))
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     prev_block = b_chain.block_list[len(b_chain.block_list)-1]
-                proposed_block = POW(prev_block, txs, DIFFICULTY)
+                proposed_block = POW(prev_block, transactions, DIFFICULTY)
                 response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
