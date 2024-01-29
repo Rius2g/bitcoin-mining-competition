@@ -66,7 +66,7 @@ def main(argv):
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     count = 1
                     prev_block = b_chain.block_list[len(b_chain.block_list)-count]
-                    while prev_block.confirmed != True:
+                    while prev_block.confirmed != True & prev_block.main_chain != True: #iterate over list to find confirmed and main chain
                         count += 1
                         prev_block = b_chain.block_list[len(b_chain.block_list)-count]
                 proposed_block = POW(prev_block, transactions, DIFFICULTY)

@@ -2,7 +2,6 @@
 
 from backbone.merkle import MerkleTree
 from abstractions.transaction import Transaction
-from utils.view import visualize_blockchain
 from utils.cryptographic import double_hash, save_signature, load_signature
 import json
 from datetime import datetime
