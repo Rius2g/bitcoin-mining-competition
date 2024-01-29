@@ -8,6 +8,8 @@ Assignment 1 - Blockchain Mining Competition
 
 Usage:
         -h                  : display usage information
+        -i [b, u]           : display information for blocks or users   #TODO
+        -t                  : request N transactions                    #TODO
         -m                  : mine a block                              #TODO
         -v b                : visualize blockchain, saved to vis/blockchain/blockchain.pdf
         -d                  : request DIFFICULTY level
