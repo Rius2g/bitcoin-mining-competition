@@ -1,6 +1,5 @@
 # backbone/consensus.py
 from utils.cryptographic import double_hash
-from block import Block
 
 
 def POW(merkelRoot, prev_hash, timestamp, DIFFICULTY):

@@ -46,12 +46,13 @@ def main(argv):
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     chain_length = len(b_chain.block_list)
-                    prev_hash = b_chain.block_list[chain_length].hash #no such function, need to find last valid block
-                    timestamp = b_chain.block_list[chain_length].time 
-                    merkelRoot = b_chain.block_list[chain_length].merkelRoot
-                proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
-                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
-                print(response)
+                    prev_hash = b_chain.block_list[chain_length-1].hash #no such function, need to find last valid block
+                    timestamp = b_chain.block_list[chain_length-1].time 
+                    merkelRoot = b_chain.block_list[chain_length-1].merkle_root
+                    print(f'prev_hash : {prev_hash}\ntimestamp : {timestamp}\nmerkelRoot : {merkelRoot}')
+                # proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
+                # response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
+                # print(response)
                 valid_args = True
             if opt == "-i":
                 if arg == "b":

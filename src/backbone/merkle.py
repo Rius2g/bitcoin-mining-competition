@@ -22,9 +22,10 @@ class MerkleTree:
     def build_tree_helper(self, Nodes):
         if len(Nodes) % 2 == 1:
             Nodes.append(Nodes[-1])
-            half = len(Nodes) // 2
+            
+        half = len(Nodes) // 2
         if len(Nodes) == 2:
-            return MerkelNode(Nodes[0], Nodes[1], hash_function(Nodes[0].hash + Nodes[1].hash))
+            return MerkelNode(Nodes[0], Nodes[1], hash_function(str(Nodes[0].hash + Nodes[1].hash)))
         
         left = self.build_tree_helper(Nodes[:half])
         right = self.build_tree_helper(Nodes[half:])
