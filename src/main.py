@@ -68,9 +68,10 @@ def main(argv):
                     prev_block = b_chain.block_list[len(b_chain.block_list)-count]
                     while prev_block.confirmed != True & prev_block.main_chain != True: #iterate over list to find confirmed and main chain
                         count += 1
-                        prev_block = b_chain.block_list[len(b_chain.block_list)-count]
+                        prev_block = b_chain.block_list[len(b_chain.block_list) - count]
                 proposed_block = POW(prev_block, transactions, DIFFICULTY)
-                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
+                print(proposed_block)
+                response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
             if opt == "-i":
