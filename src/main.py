@@ -8,6 +8,8 @@ Assignment 1 - Blockchain Mining Competition
 
 Usage:
         -h                  : display usage information
+        -i [b, u]           : display information for blocks or users   #TODO
+        -t                  : request N transactions                    #TODO
         -m                  : mine a block                              #TODO
         -v b                : visualize blockchain, saved to vis/blockchain/blockchain.pdf
         -d                  : request DIFFICULTY level
@@ -60,10 +62,14 @@ def main(argv):
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     chain_length = len(b_chain.block_list)
-                    prev_hash = b_chain.block_list[chain_length-1].hash #no such function, need to find last valid block
-                    timestamp = b_chain.block_list[chain_length-1].time 
-                    merkelRoot = b_chain.block_list[chain_length-1].merkle_root
-                    print(f'prev_hash : {prev_hash}\ntimestamp : {timestamp}\nmerkelRoot : {merkelRoot}')
+                    prev_hash = b_chain.block_list[
+                        chain_length - 1
+                    ].hash  # no such function, need to find last valid block
+                    timestamp = b_chain.block_list[chain_length - 1].time
+                    merkelRoot = b_chain.block_list[chain_length - 1].merkle_root
+                    print(
+                        f"prev_hash : {prev_hash}\ntimestamp : {timestamp}\nmerkelRoot : {merkelRoot}"
+                    )
                 # proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
                 # response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 # print(response)
