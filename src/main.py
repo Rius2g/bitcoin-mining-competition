@@ -63,10 +63,9 @@ def main(argv):
                     prev_hash = b_chain.block_list[chain_length-1].hash #no such function, need to find last valid block
                     timestamp = b_chain.block_list[chain_length-1].time 
                     merkelRoot = b_chain.block_list[chain_length-1].merkle_root
-                    print(f'prev_hash : {prev_hash}\ntimestamp : {timestamp}\nmerkelRoot : {merkelRoot}')
-                # proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
-                # response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
-                # print(response)
+                proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
+                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
+                print(response)
                 valid_args = True
             if opt == "-i":
                 if arg == "b":
