@@ -27,9 +27,23 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from utils.flask_utils import flask_call
 from abstractions.block import Blockchain
-from server import BLOCK_PROPOSAL, REQUEST_DIFFICULTY, GET_BLOCKCHAIN, ADDRESS, PORT, GET_USERS, REQUEST_TXS, DIFFICULTY
-from utils.view import visualize_blockchain, visualize_blockchain_terminal, create_visualization_table
+from server import (
+    BLOCK_PROPOSAL,
+    REQUEST_DIFFICULTY,
+    GET_BLOCKCHAIN,
+    ADDRESS,
+    PORT,
+    GET_USERS,
+    REQUEST_TXS,
+    DIFFICULTY,
+)
+from utils.view import (
+    visualize_blockchain,
+    visualize_blockchain_terminal,
+    create_visualization_table,
+)
 from backbone.consensus import POW
+
 
 def main(argv):
     try:
@@ -42,43 +56,58 @@ def main(argv):
                 valid_args = True
                 break
             if opt == "-m":  # mine block
-                _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
+                _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     chain_length = len(b_chain.block_list)
-                    prev_hash = b_chain.block_list[chain_length].hash #no such function, need to find last valid block
-                    timestamp = b_chain.block_list[chain_length].time 
+                    prev_hash = b_chain.block_list[
+                        chain_length
+                    ].hash  # no such function, need to find last valid block
+                    timestamp = b_chain.block_list[chain_length].time
                     merkelRoot = b_chain.block_list[chain_length].merkelRoot
                 proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
-                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
+                response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
             if opt == "-i":
                 if arg == "b":
-                    _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
+                    _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                     if blockchain:
                         b_chain = Blockchain.load_json(json.dumps(blockchain))
                         # table = create_visualization_table(b_chain.block_list)
-                        print(b_chain) #might need to use some views stuff to visualize better
+                        print(
+                            b_chain
+                        )  # might need to use some views stuff to visualize better
                     valid_args = True
                 elif arg == "u":
-                    _, users, code = flask_call('GET', GET_USERS)
+                    _, users, code = flask_call("GET", GET_USERS)
                     if users:
-                        field_names = ["username", "address", "balance (BTC)", "mined blocks", "confirmed blocks", "reward (BTC)"]
-                        table = create_visualization_table(field_names, users, "Users INFO")
-                        print(users) #might need to use some views stuff to visualize better
+                        field_names = [
+                            "username",
+                            "address",
+                            "balance (BTC)",
+                            "mined blocks",
+                            "confirmed blocks",
+                            "reward (BTC)",
+                        ]
+                        table = create_visualization_table(
+                            field_names, users, "Users INFO"
+                        )
+                        print(
+                            table
+                        )  # might need to use some views stuff to visualize better
                     valid_args = True
                 else:
                     valid_args = False
             if opt == "-t":
-                _, txs, code = flask_call('GET', REQUEST_TXS)
+                _, txs, code = flask_call("GET", REQUEST_TXS)
                 if txs:
                     # table = create_visualization_table(txs)
-                    print(txs) #might need to use some views stuff to visualize better
+                    print(txs)  # might need to use some views stuff to visualize better
                 valid_args = True
             if opt == "-v":
                 if arg == "b":
-                    _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
+                    _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                     if blockchain:
                         b_chain = Blockchain.load_json(json.dumps(blockchain))
                         # saves the blockchain as pdf in "vis/blockchain/blockchain.pdf"
@@ -86,7 +115,7 @@ def main(argv):
                         visualize_blockchain_terminal(b_chain.block_list, n_blocks=40)
                     valid_args = True
             if opt == "-d":
-                response, table, code = flask_call('GET', REQUEST_DIFFICULTY)
+                response, table, code = flask_call("GET", REQUEST_DIFFICULTY)
                 print(response)
                 print(table)
                 valid_args = True
@@ -102,14 +131,16 @@ def main(argv):
     except KeyboardInterrupt as e:
         print(e)
 
+
 def connect_to_server():
     """
 
     :return:
     """
-    url = 'https://' + ADDRESS + ':' + PORT + '/'
+    url = "https://" + ADDRESS + ":" + PORT + "/"
     response = requests.get(url, verify=False)
     return response
+
 
 if __name__ == "__main__":
     requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
