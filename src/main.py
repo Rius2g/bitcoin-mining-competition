@@ -24,12 +24,12 @@ import requests
 import json
 from datetime import datetime
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from consensus import POW
 
 from utils.flask_utils import flask_call
 from abstractions.block import Blockchain
-from server import BLOCK_PROPOSAL, REQUEST_DIFFICULTY, GET_BLOCKCHAIN, ADDRESS, PORT, GET_USERS, REQUEST_TXS
+from server import BLOCK_PROPOSAL, REQUEST_DIFFICULTY, GET_BLOCKCHAIN, ADDRESS, PORT, GET_USERS, REQUEST_TXS, DIFFICULTY
 from utils.view import visualize_blockchain, visualize_blockchain_terminal, create_visualization_table
+from backbone.consensus import POW
 
 def main(argv):
     try:
@@ -42,14 +42,14 @@ def main(argv):
                 valid_args = True
                 break
             if opt == "-m":  # mine block
-                difficulty, table, code = flask_call('GET', REQUEST_DIFFICULTY)
                 _, blockchain, code = flask_call('GET', GET_BLOCKCHAIN)
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
-                    prev_hash = b_chain.get_last_block().hash
-                    timestamp = b_chain.get_last_block().time 
-                    merkelRoot = b_chain.get_last_block().merkelRoot
-                proposed_block = POW(merkelRoot, prev_hash, timestamp, difficulty)
+                    chain_length = len(b_chain.block_list)
+                    prev_hash = b_chain.block_list[chain_length].hash #no such function, need to find last valid block
+                    timestamp = b_chain.block_list[chain_length].time 
+                    merkelRoot = b_chain.block_list[chain_length].merkelRoot
+                proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
                 response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True

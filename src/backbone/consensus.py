@@ -1,6 +1,5 @@
 # backbone/consensus.py
-from utils.cryptographic import hash_function
-from merkle import MerkleTree
+from utils.cryptographic import double_hash
 from block import Block
 
 
@@ -9,15 +8,13 @@ def POW(merkelRoot, prev_hash, timestamp, DIFFICULTY):
     block_header = merkelRoot + prev_hash + timestamp
 
     while True:
-        hash = hash_function(block_header + Nonece)
-        double_hash = hash_function(hash)
-        if double_hash.startswith(DIFFICULTY * "0"):
-            return build_block()
+        hash = double_hash(block_header + Nonece)
+        if hash.startswith(DIFFICULTY * "0"):
+            # return build_block()
+            return True
         Nonece += 1
 
-def build_block():
-    return Block() #send in params
-    
-    pass
+# def build_block():
+#     return Block() #send in params
 
 
