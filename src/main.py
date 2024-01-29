@@ -64,7 +64,11 @@ def main(argv):
                     transactions.append(Transaction.load_json(json.dumps(tx)))
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
-                    prev_block = b_chain.block_list[len(b_chain.block_list)-1]
+                    count = 1
+                    prev_block = b_chain.block_list[len(b_chain.block_list)-count]
+                    while prev_block.confirmed != True:
+                        count += 1
+                        prev_block = b_chain.block_list[len(b_chain.block_list)-count]
                 proposed_block = POW(prev_block, transactions, DIFFICULTY)
                 response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 print(response)
