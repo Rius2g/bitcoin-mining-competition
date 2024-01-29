@@ -3,15 +3,21 @@ from utils.cryptographic import double_hash
 from abstractions.block import Block
 from backbone.merkle import MerkleTree
 import datetime
-from utils.cryptographic import load_private, load_public, save_key, save_signature, verify_signature, load_signature
+from utils.cryptographic import (
+    load_private,
+    load_public,
+    save_key,
+    save_signature,
+    verify_signature,
+    load_signature,
+)
 from abstractions.transaction import Transaction
 
 
-def POW(Prev_block:Block, Txs: list[Transaction], DIFFICULTY) -> Block:
+def POW(Prev_block: Block, Txs: list[Transaction], DIFFICULTY) -> Block:
     hashes = []
     for tx in Txs:
-        hashes.append(
-            tx.hash)
+        hashes.append(tx.hash)
     Count = 0
     Nonce = str(Count)
     MerkTree = MerkleTree(hashes)
@@ -26,7 +32,7 @@ def POW(Prev_block:Block, Txs: list[Transaction], DIFFICULTY) -> Block:
         Nonce = str(Count)
 
 
-def build_block(Prev_block:Block, Nonce, Hash, Txs, MerkRoot):
+def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
     Transaction_list = []
     for tx in Txs:
         Transaction_list.append(tx.to_dict())
@@ -38,5 +44,6 @@ def build_block(Prev_block:Block, Nonce, Hash, Txs, MerkRoot):
         "hash": Hash,
         "transactions": Transaction_list,
         "merkle_root": MerkRoot,
-        "height": Prev_block.height + 1
+        "height": Prev_block.height + 1,
+        "signature": "signature",
     }

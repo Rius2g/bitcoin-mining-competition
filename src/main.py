@@ -65,12 +65,13 @@ def main(argv):
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     count = 1
-                    prev_block = b_chain.block_list[len(b_chain.block_list)-count]
+                    prev_block = b_chain.block_list[len(b_chain.block_list) - count]
                     while prev_block.confirmed != True:
                         count += 1
-                        prev_block = b_chain.block_list[len(b_chain.block_list)-count]
+                        prev_block = b_chain.block_list[len(b_chain.block_list) - count]
                 proposed_block = POW(prev_block, transactions, DIFFICULTY)
-                response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
+                print(proposed_block)
+                response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
             if opt == "-i":
