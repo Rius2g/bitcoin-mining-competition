@@ -59,13 +59,12 @@ def main(argv):
                 break
             if opt == "-m":  # mine block
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
+                _, txs, code = flask_call("GET", REQUEST_TXS)
+                #need to get transactions from server
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
-                    chain_length = len(b_chain.block_list)
-                    prev_hash = b_chain.block_list[chain_length-1].hash #no such function, need to find last valid block
-                    timestamp = b_chain.block_list[chain_length-1].time 
-                    merkelRoot = b_chain.block_list[chain_length-1].merkle_root
-                proposed_block = POW(merkelRoot, prev_hash, timestamp, DIFFICULTY)
+                    prev_block = b_chain.block_list[len(b_chain.block_list)-1]
+                proposed_block = POW(prev_block, txs, DIFFICULTY)
                 response, _, _ = flask_call('POST', BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
@@ -73,37 +72,19 @@ def main(argv):
                 if arg == "b":
                     _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                     if blockchain:
-                        b_chain = Blockchain.load_json(json.dumps(blockchain))
-                        # table = create_visualization_table(b_chain.block_list)
-                        print(
-                            b_chain
-                        )  # might need to use some views stuff to visualize better
+                        print(_)
                     valid_args = True
                 elif arg == "u":
                     _, users, code = flask_call("GET", GET_USERS)
                     if users:
-                        field_names = [
-                            "username",
-                            "address",
-                            "balance (BTC)",
-                            "mined blocks",
-                            "confirmed blocks",
-                            "reward (BTC)",
-                        ]
-                        table = create_visualization_table(
-                            field_names, users, "Users INFO"
-                        )
-                        print(
-                            table
-                        )  # might need to use some views stuff to visualize better
+                        print(_)
                     valid_args = True
                 else:
                     valid_args = False
             if opt == "-t":
                 _, txs, code = flask_call("GET", REQUEST_TXS)
                 if txs:
-                    # table = create_visualization_table(txs)
-                    print(txs)  # might need to use some views stuff to visualize better
+                    print(_)
                 valid_args = True
             if opt == "-v":
                 if arg == "b":
@@ -117,7 +98,6 @@ def main(argv):
             if opt == "-d":
                 response, table, code = flask_call("GET", REQUEST_DIFFICULTY)
                 print(response)
-                print(table)
                 valid_args = True
         if valid_args is False:
             print(__doc__)
