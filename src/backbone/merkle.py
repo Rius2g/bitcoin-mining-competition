@@ -1,9 +1,12 @@
 from utils.cryptographic import hash_function
+
+
 class MerkelNode:
     def __init__(self, left, right, hash):
         self.left: MerkelNode = left
         self.right: MerkelNode = right
         self.hash = hash
+
 
 class MerkleTree:
     def __init__(self, txs):
@@ -13,7 +16,7 @@ class MerkleTree:
         self.root = None
 
     def build_tree(self, hashes):
-        #fill up the hashes list if < 4 hashes
+        # fill up the hashes list if < 4 hashes
         leaves: [MerkelNode] = [MerkelNode(None, None, _) for _ in range(len(hashes))]
         if len(hashes) % 2 == 1:
             hashes.append(hashes[-1])
@@ -30,7 +33,6 @@ class MerkleTree:
         left = self.build_tree_helper(Nodes[:half])
         right = self.build_tree_helper(Nodes[half:])
         return MerkelNode(left, right, hash_function(left.hash + right.hash))
-    
 
     def get_root(self):
         return self.root.hash
