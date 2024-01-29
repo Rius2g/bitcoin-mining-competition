@@ -5,13 +5,30 @@ from abstractions.transaction import Transaction
 from utils.view import visualize_blockchain
 from utils.cryptographic import double_hash, save_signature, load_signature
 import json
+from datetime import datetime
+
 
 class Block:
     """
     Dummy Bitcoin Block
     """
-    def __init__(self, hash, nonce, time, creation_time, height, previous_block=None, transactions=None, main_chain=True,
-                 confirmed=False, merkle_root=None, next=[], mined_by=None, signature=None):
+
+    def __init__(
+        self,
+        hash,
+        nonce,
+        time,
+        creation_time,
+        height,
+        previous_block=None,
+        transactions=None,
+        main_chain=True,
+        confirmed=False,
+        merkle_root=None,
+        next=[],
+        mined_by=None,
+        signature=None,
+    ):
         """
 
         :param hash: str, block hash
@@ -34,16 +51,18 @@ class Block:
         self.hash = hash
         self.prev = previous_block  # hash of the previous block
         self.nonce = nonce
-        self.time = time # datetime.now().timestamp()
+        self.time = time  # datetime.now().timestamp()
         self.creation_time = creation_time
         self.merkle_tree = self.create_merkle_tree()
         self.height = height
         if merkle_root is None:
-            self.merkle_root = self.merkle_tree.get_root()['hash']
+            self.merkle_root = self.merkle_tree.get_root()["hash"]
         else:
             self.merkle_root = merkle_root
         self.main_chain = main_chain  # if False, block is in a forked branch
-        self.confirmed = confirmed  # becomes True if main_chain and more than N_BLOCKS_PER_BRANCH
+        self.confirmed = (
+            confirmed  # becomes True if main_chain and more than N_BLOCKS_PER_BRANCH
+        )
         self.next = next
         self.mined_by = mined_by
         self.signature = signature  # signature with miner private key of block hash
@@ -67,26 +86,28 @@ class Block:
             "next": self.next,
             "mined_by": self.mined_by,
             "height": self.height,
-            "signature" : signature
+            "signature": signature,
         }
 
     @classmethod
     def load_json(cls, data):
         data = json.loads(data)
-        transactions = [Transaction.load_json(json.dumps(t)) for t in data["transactions"]]
+        transactions = [
+            Transaction.load_json(json.dumps(t)) for t in data["transactions"]
+        ]
         signature = load_signature(data["signature"])
         return cls(
-            hash=data['hash'],
-            time=data['time'],
-            nonce=data['nonce'],
-            creation_time=data['creation_time'],
+            hash=data["hash"],
+            time=data["time"],
+            nonce=data["nonce"],
+            creation_time=data["creation_time"],
             transactions=transactions,
-            previous_block=data['prev'],
-            main_chain=data['main_chain'],
-            confirmed=data['confirmed'],
-            next=data['next'],
-            merkle_root=data['merkle_root'],
-            mined_by=data['mined_by'],
+            previous_block=data["prev"],
+            main_chain=data["main_chain"],
+            confirmed=data["confirmed"],
+            next=data["next"],
+            merkle_root=data["merkle_root"],
+            mined_by=data["mined_by"],
             height=data["height"],
             signature=signature,
         )
@@ -122,10 +143,22 @@ class Blockchain:
     """
     Blockchain class as a list of blocks
     """
-    def __init__(self, block_list):
+
+    def __init__(self, block_list: [Block]):
         self.block_list = block_list
         self.chain = self.make_chain_from_list()
         self.is_valid = self.is_chain_valid()
+
+    def __str__(self):
+        """
+        redefine builtin func for printing
+        :return:
+        """
+        output = ""
+        for block in self.block_list:
+            output += f""" Block hash: {block.hash}\n Block nonce: {block.nonce}\n Block time: {datetime.fromtimestamp(block.time)}\n Block creation time: {block.creation_time}\n Block height: {block.height}\n Block previous hash: {block.prev}\n Block merkle root: {block.merkle_root}\n Block main chain: {block.main_chain}\n Block confirmed: {block.confirmed}\n Block next: {block.next[0] if len(block.next) > 0 else "None" }\n Block mined by: {block.mined_by}\n Block signature: {block.signature}\n\n"""
+
+        return output
 
     def make_chain_from_list(self):
         """
@@ -144,9 +177,9 @@ class Blockchain:
         """
 
         return {
-            "block_list" : None,
-            "chain" : [b.to_dict() for _, b in self.chain.items()],
-            "is_valid" : self.is_valid
+            "block_list": None,
+            "chain": [b.to_dict() for _, b in self.chain.items()],
+            "is_valid": self.is_valid,
         }
 
     @classmethod
@@ -164,14 +197,19 @@ class Blockchain:
         """
         for key in self.chain:
             current_b = self.chain[key]
-            if current_b.prev == 'None':
+            if current_b.prev == "None":
                 # genesis block shall not be checked
                 pass
             else:
                 # previous block
                 prev_b = self.chain[self.chain[key].prev]
                 # calculate current block hash
-                data = str(current_b.prev) + str(current_b.time) + str(current_b.merkle_root) + str(current_b.nonce)
+                data = (
+                    str(current_b.prev)
+                    + str(current_b.time)
+                    + str(current_b.merkle_root)
+                    + str(current_b.nonce)
+                )
                 current_b_hash = double_hash(data)
                 if current_b.hash != current_b_hash:
                     # current hash is different from the calculated one
@@ -188,7 +226,7 @@ class Blockchain:
         :return: bool
         """
         # if genesis add it to the chain
-        if new_block.prev == 'None':
+        if new_block.prev == "None":
             self.chain[new_block.hash] = new_block
             return True
         else:
@@ -232,9 +270,12 @@ class Blockchain:
         :return:
         """
         from server import N_BLOCKS_PER_BRANCH
+
         for k in self.chain:
             b = self.chain[k]
-            if not b.confirmed:  # the chain can become false only if block has not being confirmed yet
+            if (
+                not b.confirmed
+            ):  # the chain can become false only if block has not being confirmed yet
                 if len(b.next) > 1:  # if fork
                     hashes = b.next
                     count_branches = []
@@ -290,6 +331,7 @@ def count_blocks_per_branch(blockchain, start_hash_branch):
     """
     count = dict()
     visited = set()
+
     def dfs(block_hash, branch_id):
         """
         recursive function that implements a depth-first search
@@ -316,5 +358,6 @@ def count_blocks_per_branch(blockchain, start_hash_branch):
         # for next_block_id in list of next
         for next_block_id in blockchain[block_hash].next:
             dfs(next_block_id, branch_id)
+
     dfs(start_hash_branch, start_hash_branch)
     return count
