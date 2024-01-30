@@ -33,9 +33,6 @@ def GetPrivateKey():
 
 
 def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
-    Transaction_list = []
-    for tx in Txs:
-        Transaction_list.append(tx.to_dict())
     time = datetime.datetime.now().timestamp()
     sign = rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")
 
@@ -45,8 +42,9 @@ def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
         "time": time,
         "creation_time": time,
         "hash": Hash,
-        "transactions": Transaction_list,
+        "transactions": [t.to_dict() for t in Txs],
         "merkle_root": MerkRoot,
         "height": Prev_block.height + 1,
         "signature": str(sign),
+        "prev": Prev_block.hash,
     }
