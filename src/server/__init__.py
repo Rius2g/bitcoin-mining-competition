@@ -7,16 +7,16 @@ KEY_PAIRS_PATH = "../vis/users/keys/"
 KEY_PAIRS_DICT = "user_keys.pkl"
 
 # network
-PORT = '8080'
-ADDRESS = 'ete011@inf3203.cs.uit.no'
-URL = 'https://' + ADDRESS + ':' + PORT + '/'
+PORT = "8080"
+ADDRESS = "ete011@inf3203.cs.uit.no"
+URL = "https://" + ADDRESS + ":" + PORT + "/"
 
-SELF = 'hmm112'
+SELF = "hmm112"
 
 # endpoints
-BLOCK_PROPOSAL = 'block_proposal'
-GET_BLOCKCHAIN = 'get_blockchain'
-GET_USERS = 'get_users'
-REQUEST_TXS = 'request_txs'
-GET_DATABASE = 'get_database'
-REQUEST_DIFFICULTY = 'request_difficulty'
+BLOCK_PROPOSAL = "block_proposal"
+GET_BLOCKCHAIN = "get_blockchain"
+GET_USERS = "get_users"
+REQUEST_TXS = "request_txs"
+GET_DATABASE = "get_database"
+REQUEST_DIFFICULTY = "request_difficulty"

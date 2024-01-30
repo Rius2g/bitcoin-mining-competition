@@ -6,13 +6,13 @@ import datetime
 from abstractions.transaction import Transaction
 from utils.cryptographic import load_signature, load_private
 import rsa
+import json
 
 
 def POW(Prev_block: Block, Txs: list[Transaction], DIFFICULTY) -> Block:
     hashes = []
     for tx in Txs:
-        hashes.append(
-            tx.hash)
+        hashes.append(tx.hash)
     Count = 1
     Nonce = str(Count)
     MerkTree = MerkleTree(hashes)
@@ -26,6 +26,7 @@ def POW(Prev_block: Block, Txs: list[Transaction], DIFFICULTY) -> Block:
         Count += 1
         Nonce = str(Count)
 
+
 def GetPrivateKey():
     file = open("../vis/users/hmm112_pvk.pem", "r")
     return file.read()
@@ -36,7 +37,7 @@ def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
     for tx in Txs:
         Transaction_list.append(tx.to_dict())
     time = datetime.datetime.now().timestamp()
-    sign = rsa.sign(hash, load_private(GetPrivateKey()), 'SHA-1')
+    sign = rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")
     return {
         "previous_block": Prev_block.hash,
         "nonce": Nonce,
@@ -46,5 +47,5 @@ def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
         "transactions": Transaction_list,
         "merkle_root": MerkRoot,
         "height": Prev_block.height + 1,
-        "signature": sign,
+        "signature": sign.decode("utf-8"),
     }
