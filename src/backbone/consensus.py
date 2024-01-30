@@ -38,6 +38,7 @@ def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
         Transaction_list.append(tx.to_dict())
     time = datetime.datetime.now().timestamp()
     sign = rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")
+    print(str(sign))
     return {
         "previous_block": Prev_block.hash,
         "nonce": Nonce,
@@ -47,5 +48,5 @@ def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
         "transactions": Transaction_list,
         "merkle_root": MerkRoot,
         "height": Prev_block.height + 1,
-        "signature": sign.decode("utf-8"),
+        "signature": str(sign),
     }
