@@ -4,7 +4,7 @@ from abstractions.block import Block
 from backbone.merkle import MerkleTree
 import datetime
 from abstractions.transaction import Transaction
-from utils.cryptographic import load_signature, load_private
+from utils.cryptographic import load_private, verify_signature
 import rsa
 import json
 import base64
@@ -17,9 +17,10 @@ def POW(Prev_block: Block, Txs: list[Transaction]) -> Block:
     MerkTree = MerkleTree(hashes)
     time = str(datetime.datetime.now().timestamp())
     merk_root = MerkTree.get_root()
+    block_header = merk_root + Prev_block.hash + time
+
 
     while True:
-        block_header = merk_root + Prev_block.hash + time
         hash = double_hash(block_header + str(Nonce))
         if hash.startswith(DIFFICULTY * "0"):
             return build_block(Prev_block, Nonce, hash, Txs, merk_root, time)
