@@ -59,6 +59,7 @@ def main(argv):
             if opt == "-m":  # mine block
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                 _, txs, code = flask_call("GET", REQUEST_TXS)
+
                 transactions = []
                 for tx in txs:
                     transactions.append(Transaction.load_json(json.dumps(tx)))
@@ -69,8 +70,8 @@ def main(argv):
                     while prev_block.confirmed != True & prev_block.main_chain != True: #iterate over list to find confirmed and main chain
                         count += 1
                         prev_block = b_chain.block_list[len(b_chain.block_list) - count]
-                proposed_block = POW(prev_block, transactions, DIFFICULTY)
-                print(proposed_block)
+                proposed_block = POW(prev_block, transactions)
+                # print(proposed_block)
                 response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
@@ -103,7 +104,7 @@ def main(argv):
                     valid_args = True
             if opt == "-d":
                 response, table, code = flask_call("GET", REQUEST_DIFFICULTY)
-                print(response)
+                print(table)
                 valid_args = True
         if valid_args is False:
             print(__doc__)

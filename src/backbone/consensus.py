@@ -7,24 +7,23 @@ from abstractions.transaction import Transaction
 from utils.cryptographic import load_signature, load_private
 import rsa
 import json
+import base64
+from server.__init__ import SELF, DIFFICULTY
 
 
-def POW(Prev_block: Block, Txs: list[Transaction], DIFFICULTY) -> Block:
-    hashes = []
-    for tx in Txs:
-        hashes.append(tx.hash)
-    Count = 1
-    Nonce = str(Count)
+def POW(Prev_block: Block, Txs: list[Transaction]) -> Block:
+    hashes = [tx.hash for tx in Txs]
+    Nonce = 1
     MerkTree = MerkleTree(hashes)
-
-    block_header = str(MerkTree.root) + str(Prev_block.hash) + str(Prev_block.time)
+    time = str(datetime.datetime.now().timestamp())
+    merk_root = MerkTree.get_root()
 
     while True:
-        hash = double_hash(block_header + Nonce)
+        block_header = merk_root + Prev_block.hash + time
+        hash = double_hash(block_header + str(Nonce))
         if hash.startswith(DIFFICULTY * "0"):
-            return build_block(Prev_block, Nonce, hash, Txs, MerkTree.get_root())
-        Count += 1
-        Nonce = str(Count)
+            return build_block(Prev_block, Nonce, hash, Txs, merk_root, time)
+        Nonce += 1
 
 
 def GetPrivateKey():
@@ -32,19 +31,22 @@ def GetPrivateKey():
     return file.read()
 
 
-def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot):
-    time = datetime.datetime.now().timestamp()
-    sign = rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")
+def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot, timestamp):
+    sign = base64.b64encode(rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")).decode()
 
     return {
         "previous_block": Prev_block.hash,
         "nonce": Nonce,
-        "time": time,
-        "creation_time": time,
+        "time": timestamp,
+        "creation_time": timestamp,
         "hash": Hash,
         "transactions": [t.to_dict() for t in Txs],
         "merkle_root": MerkRoot,
         "height": Prev_block.height + 1,
         "signature": str(sign),
         "prev": Prev_block.hash,
+        "main_chain": True,
+        "confirmed": True,
+        "next": [],
+        "mined_by": SELF
     }

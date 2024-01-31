@@ -9,11 +9,11 @@ class MerkelNode:
 
 
 class MerkleTree:
-    def __init__(self, txs): #list of transaction dicts
+    def __init__(self, hashes): #list of hashes for transactions
         self.data = None
         self.leaf_nodes = None
         self.root = None
-        self.build_tree(txs)
+        self.build_tree(hashes)
 
     def build_tree(self, hashes):
 
