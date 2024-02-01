@@ -4,9 +4,8 @@ from abstractions.block import Block
 from backbone.merkle import MerkleTree
 import datetime
 from abstractions.transaction import Transaction
-from utils.cryptographic import load_private, verify_signature
+from utils.cryptographic import load_private
 import rsa
-import json
 import base64
 from server.__init__ import SELF, DIFFICULTY
 

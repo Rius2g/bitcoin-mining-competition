@@ -10,11 +10,9 @@ class MerkelNode:
 
 class MerkleTree:
     def __init__(self, hashes): #list of hashes for transactions
-        self.root = None
         self.build_tree(hashes)
 
     def build_tree(self, hashes):
-        
         leaves: [MerkelNode] = [MerkelNode(None, None, hash) for hash in hashes]
         if len(leaves) % 2 == 1:
             leaves.append(MerkelNode(None, None, leaves[-1].hash)) #need an extra Node to make it even
@@ -28,9 +26,7 @@ class MerkleTree:
         half = len(Nodes) // 2
 
         if len(Nodes) == 2:
-            return MerkelNode(
-                Nodes[0], Nodes[1], hash_function(str(Nodes[0].hash + Nodes[1].hash))
-            )
+            return MerkelNode(Nodes[0], Nodes[1], hash_function(Nodes[0].hash + Nodes[1].hash))
 
         left = self.build_tree_helper(Nodes[:half])
         right = self.build_tree_helper(Nodes[half:])

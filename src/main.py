@@ -59,9 +59,7 @@ def main(argv):
             if opt == "-m":  # mine block
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                 _, txs, code = flask_call("GET", REQUEST_TXS)
-                transactions = []
-                for tx in txs:
-                    transactions.append(Transaction.load_json(json.dumps(tx)))
+                transactions = [Transaction.load_json(json.dumps(tx)) for tx in txs]
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     count = 1
