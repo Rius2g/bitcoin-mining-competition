@@ -63,8 +63,10 @@ def main(argv):
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
                     count = 1
-                    prev_block = b_chain.block_list[len(b_chain.block_list)-count]
-                    while prev_block.confirmed != True & prev_block.main_chain != True: #iterate over list to find confirmed and main chain
+                    prev_block = b_chain.block_list[len(b_chain.block_list) - count]
+                    while (
+                        prev_block.confirmed != True & prev_block.main_chain != True
+                    ):  # iterate over list to find confirmed and main chain
                         count += 1
                         prev_block = b_chain.block_list[len(b_chain.block_list) - count]
                 proposed_block = POW(prev_block, transactions)
@@ -74,21 +76,21 @@ def main(argv):
                 valid_args = True
             if opt == "-i":
                 if arg == "b":
-                    _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
+                    msg, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                     if blockchain:
-                        print(_)
+                        print(msg)
                     valid_args = True
                 elif arg == "u":
-                    _, users, code = flask_call("GET", GET_USERS)
+                    msg, users, code = flask_call("GET", GET_USERS)
                     if users:
-                        print(_)
+                        print(msg)
                     valid_args = True
                 else:
                     valid_args = False
             if opt == "-t":
-                _, txs, code = flask_call("GET", REQUEST_TXS)
+                msg, txs, code = flask_call("GET", REQUEST_TXS)
                 if txs:
-                    print(_)
+                    print(msg)
                 valid_args = True
             if opt == "-v":
                 if arg == "b":
