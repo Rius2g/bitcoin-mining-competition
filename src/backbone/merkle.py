@@ -26,7 +26,7 @@ class MerkleTree:
                 MerkelNode(None, None, Nodes[-1].hash)
             )  # need an extra Node to make it even
 
-        half = int(len(Nodes) / 2)
+        half = len(Nodes) // 2
 
         if len(Nodes) == 2:
             return MerkelNode(
@@ -36,9 +36,6 @@ class MerkleTree:
         left = self.create_root(Nodes[:half])
         right = self.create_root(Nodes[half:])
         return MerkelNode(left, right, hash_function(left.hash + right.hash))
-
-    def build_tree_helper(self, Nodes):
-        pass
 
     def print_tree(self):
         print("root")
