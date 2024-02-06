@@ -28,6 +28,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from utils.flask_utils import flask_call
 from abstractions.block import Blockchain
+from abstractions.user import User
 from server import (
     BLOCK_PROPOSAL,
     REQUEST_DIFFICULTY,
@@ -36,7 +37,8 @@ from server import (
     PORT,
     GET_USERS,
     REQUEST_TXS,
-    DIFFICULTY,
+    GET_DATABASE
+
 )
 from utils.view import (
     visualize_blockchain,
@@ -58,19 +60,13 @@ def main(argv):
                 break
             if opt == "-m":  # mine block
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
-                _, txs, code = flask_call("GET", REQUEST_TXS)
-                transactions = [Transaction.load_json(json.dumps(tx)) for tx in txs]
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
-                    count = 1
-                    prev_block = b_chain.block_list[len(b_chain.block_list) - count]
-                    while (
-                        prev_block.confirmed != True & prev_block.main_chain != True
-                    ):  # iterate over list to find confirmed and main chain
-                        count += 1
-                        prev_block = b_chain.block_list[len(b_chain.block_list) - count]
-                proposed_block = POW(prev_block, transactions)
-                # print(proposed_block)
+                _, db, code = flask_call("GET", GET_DATABASE)
+                _, txs, code = flask_call("GET", REQUEST_TXS)
+                transactions = [Transaction.load_json(json.dumps(tx)) for tx in txs]
+                users = [User.load_json(json.dumps(user)) for user in db]
+                proposed_block = POW(users, b_chain.block_list[-1], transactions)
                 response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
