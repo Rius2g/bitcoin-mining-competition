@@ -11,7 +11,7 @@ import rsa
 import base64
 from server.__init__ import SELF, DIFFICULTY
 
-def Transaction_approval(Db, Txs: list[Transaction]) -> list:
+def Transaction_approval(Db, Txs: list[Transaction]):
     spent_outputs = set()
 
     valid_txs = []
@@ -41,6 +41,8 @@ def Transaction_approval(Db, Txs: list[Transaction]) -> list:
         if valid == True:
             spent_outputs.update(tx.hash)
             valid_txs.append(tx)
+
+    return valid_txs
 
 
 def POW(Db, Prev_block: Block, Txs: list[Transaction]) -> Block:
