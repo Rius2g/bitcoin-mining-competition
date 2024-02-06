@@ -62,11 +62,9 @@ def main(argv):
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                 if blockchain:
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
-                _, db, code = flask_call("GET", GET_DATABASE)
                 _, txs, code = flask_call("GET", REQUEST_TXS)
                 transactions = [Transaction.load_json(json.dumps(tx)) for tx in txs]
-                users = [User.load_json(json.dumps(user)) for user in db]
-                proposed_block = POW(users, b_chain.block_list[-1], transactions)
+                proposed_block = POW(b_chain.block_list[-1], transactions)
                 response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
                 print(response)
                 valid_args = True
