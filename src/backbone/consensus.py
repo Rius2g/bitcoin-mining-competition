@@ -2,7 +2,6 @@
 from utils.cryptographic import double_hash
 from abstractions.block import Block
 from backbone.merkle import MerkleTree
-from abstractions.user import User
 import datetime
 
 from abstractions.transaction import Transaction
@@ -12,14 +11,11 @@ import base64
 from server.__init__ import SELF, DIFFICULTY
 
 def Transaction_approval(Db, Txs: list[Transaction]):
-    spent_outputs = set()
+    # spent_outputs = set()
 
     valid_txs = []
 
     for tx in Txs:
-        if any(input_tx in spent_outputs for input_tx in tx.prev_hash):
-            continue
-
         # if not verify_signature(tx.hash, tx.prev_owner_sig, tx.receiver_pub):
         #     continue
 
@@ -33,21 +29,21 @@ def Transaction_approval(Db, Txs: list[Transaction]):
                 valid = True
                 break 
 
-        if valid:
+        if valid: #will only approve transactions where the source address has enough balance and the signature is verified
             for user in Db:
                 if user.address == tx.destination_address:
                     user.balance += tx.amount
-
-        if valid == True:
-            spent_outputs.update(tx.hash)
-            valid_txs.append(tx)
+                    tx.is_verified = True
+                    valid_txs.append(tx)
+                    break
 
     return valid_txs
 
-
 def POW(Db, Prev_block: Block, Txs: list[Transaction]) -> Block:
     # before taking hashes we check transactions and verify them and remove invalid transactions
+    Txs = sorted(Txs, key=lambda tx: tx.time)
     valid_txs = Transaction_approval(Db, Txs)
+
             
     
     hashes = [tx.hash for tx in valid_txs]
@@ -61,7 +57,7 @@ def POW(Db, Prev_block: Block, Txs: list[Transaction]) -> Block:
     while True:
         hash = double_hash(block_header + str(Nonce))
         if hash.startswith(DIFFICULTY * "0"):
-            return build_block(Prev_block, Nonce, hash, Txs, merk_root, time)
+            return build_block(Prev_block, Nonce, hash, valid_txs, merk_root, time)
         Nonce += 1
 
 
@@ -72,12 +68,11 @@ def GetPrivateKey():
 
 def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot, timestamp):
     sign = base64.b64encode(rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")).decode()
-
     return {
         "previous_block": Prev_block.hash,
         "nonce": Nonce,
         "time": timestamp,
-        "creation_time": timestamp,
+        "creation_time": str(datetime.datetime.now().timestamp()),
         "hash": Hash,
         "transactions": [t.to_dict() for t in Txs],
         "merkle_root": MerkRoot,
