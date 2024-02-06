@@ -3,6 +3,7 @@ import rsa
 import base64
 import json
 
+
 def verify_signature(message, signature, pubkey):
     """
     verify a signature
@@ -12,7 +13,7 @@ def verify_signature(message, signature, pubkey):
     :return: bool
     """
     try:
-        b_msg = bytes(message, 'utf-8')
+        b_msg = bytes(message, "utf-8")
         result = rsa.verify(b_msg, signature, pubkey)
         if result:
             return True
@@ -22,13 +23,15 @@ def verify_signature(message, signature, pubkey):
         print(f"Verification error: {e}")
         return False
 
+
 def save_key(key):
     """
     serializes public/private key
     :param key:
     :return:
     """
-    return key.save_pkcs1(format="PEM").decode('utf-8')
+    return key.save_pkcs1(format="PEM").decode("utf-8")
+
 
 def load_public(pub):
     """
@@ -36,7 +39,8 @@ def load_public(pub):
     :param pub:
     :return:
     """
-    return rsa.PublicKey.load_pkcs1(pub.encode('utf-8'))
+    return rsa.PublicKey.load_pkcs1(pub.encode("utf-8"))
+
 
 def load_private(pvt):
     """
@@ -44,7 +48,8 @@ def load_private(pvt):
     :param pvt:
     :return:
     """
-    return rsa.PrivateKey.load_pkcs1(pvt.encode('utf-8'))
+    return rsa.PrivateKey.load_pkcs1(pvt.encode("utf-8"))
+
 
 def save_signature(signature):
     """
@@ -52,8 +57,9 @@ def save_signature(signature):
     :param signature: signature saved with "rsa.sign(b_msg, self.privkey, 'SHA-1')"
     :return:
     """
-    serialized_signature = base64.b64encode(signature).decode('utf-8')
+    serialized_signature = base64.b64encode(signature).decode("utf-8")
     return serialized_signature
+
 
 def load_signature(serialized_signature):
     """
@@ -61,7 +67,7 @@ def load_signature(serialized_signature):
     :param serialized_signature: signature in format base64
     :return:
     """
-    signature = base64.b64decode(serialized_signature.encode('utf-8'))
+    signature = base64.b64decode(serialized_signature.encode("utf-8"))
     return signature
 
 
@@ -72,6 +78,7 @@ def hash_function(data):
     :return: hashed value
     """
     return hashlib.sha256(data.encode()).hexdigest()
+
 
 def double_hash(data):
     """
