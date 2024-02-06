@@ -10,7 +10,7 @@ Usage:
         -h                  : display usage information
         -i [b, u]           : display information for blocks or users   
         -t                  : request N transactions                    
-        -m                  : mine a block                              #TODO
+        -m                  : mine a block                              
         -v b                : visualize blockchain, saved to vis/blockchain/blockchain.pdf
         -d                  : request DIFFICULTY level
 """
