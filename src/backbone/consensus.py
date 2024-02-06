@@ -4,14 +4,30 @@ from abstractions.block import Block
 from backbone.merkle import MerkleTree
 import datetime
 from abstractions.transaction import Transaction
-from utils.cryptographic import load_private
+from utils.cryptographic import load_private, verify_signature, load_signature
 import rsa
 import base64
 from server.__init__ import SELF, DIFFICULTY
 
-
 def POW(Prev_block: Block, Txs: list[Transaction]) -> Block:
-    hashes = [tx.hash for tx in Txs]
+    # before taking hashes we check transactions and verify them and remove invalid transactions
+
+    spent_outputs = set()
+
+    valid_txs = []
+
+    for tx in Txs:
+        if any(input_tx in spent_outputs for input_tx in tx.prev_hash):
+            continue
+
+        # if not verify_signature(tx.hash, tx.prev_owner_sig, tx.receiver_pub):
+        #     continue
+
+        spent_outputs.update(tx.hash)
+
+        valid_txs.append(tx)
+            
+    hashes = [tx.hash for tx in valid_txs]
     Nonce = 1
     MerkTree = MerkleTree(hashes)
     time = str(datetime.datetime.now().timestamp())
