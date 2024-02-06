@@ -6,7 +6,6 @@ import json
 from utils.cryptographic import hash_function, save_key, load_public, load_private
 from utils.view import Colors
 from abstractions.transaction import Transaction
-from server.db import get_user
 
 
 class User:
