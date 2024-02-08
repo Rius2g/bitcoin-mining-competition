@@ -13,30 +13,34 @@ class MerkelNode:
 
 class MerkleTree:
     def __init__(self, hashes):  # list of hashes for transactions
+        self.root = None
         self.build_tree(hashes)
 
     def build_tree(self, hashes):
-        leaves: [MerkelNode] = [MerkelNode(None, None, hash) for hash in hashes]
+        leaves = [MerkelNode(None, None, hash_function(hash_val)) for hash_val in hashes]
 
-        self.root = self.create_root(leaves)
+        self.root = self._build_tree(leaves)
 
-    def create_root(self, Nodes):
-        if len(Nodes) % 2 == 1:
-            Nodes.append(
-                MerkelNode(None, None, Nodes[-1].hash)
-            )  # need an extra Node to make it even
+    def _build_tree(self, nodes):
+        if len(nodes) == 1:
+            return nodes[0]
 
-        half = len(Nodes) // 2
+        while len(nodes) > 1:
+            if len(nodes) % 2 != 0:
+                nodes.append(nodes[-1])
+                
+            new_level = []
+            for i in range(0, len(nodes)-1, 2):
+                left = nodes[i]
+                right = nodes[i + 1] if i + 1 < len(nodes) else None
 
-        if len(Nodes) == 2:
-            return MerkelNode(
-                Nodes[0], Nodes[1], hash_function(Nodes[0].hash + Nodes[1].hash)
-            )
+                new_node = MerkelNode(left, right, hash_function(left.hash + (right.hash if right else left.hash)))
+                new_level.append(new_node)
+            nodes = new_level
+        
 
-        left = self.create_root(Nodes[:half])
-        right = self.create_root(Nodes[half:])
-        return MerkelNode(left, right, hash_function(left.hash + right.hash))
-
+        return nodes[0]
+    
     def print_tree(self):
         print("root")
         print(self.root)
