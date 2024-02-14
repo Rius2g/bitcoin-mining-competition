@@ -14,6 +14,7 @@ Usage:
         -v b                : visualize blockchain, saved to vis/blockchain/blockchain.pdf
         -d                  : request DIFFICULTY level
 """
+
 __author__ = "Enrico Tedeschi"
 __copyright__ = "Copyright (C) 2023 Enrico Tedeschi"
 __license__ = "GNU General Public License."
@@ -37,8 +38,7 @@ from server import (
     PORT,
     GET_USERS,
     REQUEST_TXS,
-    GET_DATABASE
-
+    GET_DATABASE,
 )
 from utils.view import (
     visualize_blockchain,

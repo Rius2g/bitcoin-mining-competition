@@ -17,7 +17,9 @@ class MerkleTree:
         self.build_tree(hashes)
 
     def build_tree(self, hashes):
-        leaves = [MerkelNode(None, None, hash_function(hash_val)) for hash_val in hashes]
+        leaves = [
+            MerkelNode(None, None, hash_function(hash_val)) for hash_val in hashes
+        ]
 
         self.root = self._build_tree(leaves)
 
@@ -28,19 +30,22 @@ class MerkleTree:
         while len(nodes) > 1:
             if len(nodes) % 2 != 0:
                 nodes.append(nodes[-1])
-                
+
             new_level = []
-            for i in range(0, len(nodes)-1, 2):
+            for i in range(0, len(nodes) - 1, 2):
                 left = nodes[i]
                 right = nodes[i + 1] if i + 1 < len(nodes) else None
 
-                new_node = MerkelNode(left, right, hash_function(left.hash + (right.hash if right else left.hash)))
+                new_node = MerkelNode(
+                    left,
+                    right,
+                    hash_function(left.hash + (right.hash if right else left.hash)),
+                )
                 new_level.append(new_node)
             nodes = new_level
-        
 
         return nodes[0]
-    
+
     def print_tree(self):
         print("root")
         print(self.root)

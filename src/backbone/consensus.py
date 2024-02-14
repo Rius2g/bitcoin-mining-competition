@@ -40,7 +40,7 @@ def build_block(Prev_block: Block, Nonce, Hash, Txs, MerkRoot, timestamp, start)
         rsa.sign(Hash.encode(), load_private(GetPrivateKey()), "SHA-1")
     ).decode()
     return {
-        "previous_block": Prev_block.hash,
+        # "previous_block": Prev_block.hash,
         "nonce": Nonce,
         "time": timestamp,
         "creation_time": str(datetime.datetime.now().timestamp() - start),
