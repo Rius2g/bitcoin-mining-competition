@@ -51,23 +51,36 @@ from abstractions.transaction import Transaction
 def main(argv):
     try:
         opts, args = getopt.getopt(argv, "hi:tmdv:")
-        # print(f'opts : {opts}\nargs : {args}')
+
         valid_args = False
         for opt, arg in opts:
             if opt == "-h":  # usage
                 print(__doc__)
                 valid_args = True
                 break
-            if opt == "-m":  # mine block
+            if opt == "-m":  # Check if the option is to mine a block
+                # Retrieve the blockchain from the server
                 _, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
                 if blockchain:
+                    # Load the blockchain from JSON format
                     b_chain = Blockchain.load_json(json.dumps(blockchain))
+
+                # Retrieve transactions from the server
                 _, txs, code = flask_call("GET", REQUEST_TXS)
+                # Load transactions from JSON format
                 transactions = [Transaction.load_json(json.dumps(tx)) for tx in txs]
+
+                # Create a proposed block using Proof of Work (PoW)
                 proposed_block = POW(b_chain.block_list[-1], transactions)
+
+                # Send the proposed block to the server
                 response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
+                # Print the server's response
                 print(response)
+
+                # Set flag to indicate valid arguments
                 valid_args = True
+
             if opt == "-i":
                 if arg == "b":
                     msg, blockchain, code = flask_call("GET", GET_BLOCKCHAIN)
