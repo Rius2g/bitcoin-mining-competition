@@ -5,7 +5,7 @@ from backbone.merkle import MerkleTree
 import datetime
 
 from abstractions.transaction import Transaction
-from utils.cryptographic import load_private, verify_signature, load_public
+from utils.cryptographic import load_private
 import rsa
 import base64
 from server.__init__ import SELF, DIFFICULTY
@@ -13,8 +13,8 @@ from server.__init__ import SELF, DIFFICULTY
 
 def POW(Prev_block: Block, Txs: list[Transaction]) -> Block:
     # Sort transactions by time
+    start = datetime.datetime.now().timestamp()
     Txs = sorted(Txs, key=lambda tx: tx.time)
-
     # Create a list of transaction hashes
     hashes = [tx.hash for tx in Txs]
 
