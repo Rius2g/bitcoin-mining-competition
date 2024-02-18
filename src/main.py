@@ -71,7 +71,16 @@ def main(argv):
                 transactions = [Transaction.load_json(json.dumps(tx)) for tx in txs]
 
                 # Create a proposed block using Proof of Work (PoW)
-                proposed_block = POW(b_chain.block_list[-1], transactions)
+                block_index = -1
+                block = b_chain.block_list[block_index]
+                while True:
+                    if block.main_chain:
+                        proposed_block = POW(block, transactions)
+                        break
+                    else:
+                        block_index -= 1
+                        block = b_chain.block_list[block_index]
+
 
                 # Send the proposed block to the server
                 response, _, _ = flask_call("POST", BLOCK_PROPOSAL, proposed_block)
